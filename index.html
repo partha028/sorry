@@ -37,6 +37,11 @@
       z-index: 3;
       transition: transform 1s ease-in-out;
       transform-origin: left center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
     }
 
     .door::before {
@@ -49,6 +54,13 @@
       background: #fff;
       border-radius: 50%;
       transform: translateY(-50%);
+    }
+
+    .door-text {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1.4;
     }
 
     .instruction {
@@ -113,7 +125,9 @@
 </head>
 <body>
 
-  <div class="door" id="door"></div>
+  <div class="door" id="door">
+    <div class="door-text">Please touch the door<br>to open</div>
+  </div>
   <div class="instruction" id="instruction">Please open the door, Neena...</div>
 
   <div class="card" id="card">
@@ -141,21 +155,17 @@
         door.remove();
       }, 1000);
 
-      if (e.cancelable) {
-        e.preventDefault();
-      }
+      if (e.cancelable) e.preventDefault();
     }
 
-    // Add both click and touchstart events with passive: false
     door.addEventListener('click', openDoor, { passive: false });
     door.addEventListener('touchstart', openDoor, { passive: false });
 
-    // Optional: prevent scroll while interacting
     document.body.addEventListener('touchmove', function(e) {
       e.preventDefault();
     }, { passive: false });
 
-    // HEARTS ANIMATION
+    // Hearts animation
     const canvas = document.querySelector('.hearts');
     const ctx = canvas.getContext('2d');
     let hearts = [];
