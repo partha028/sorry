@@ -109,11 +109,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    @keyframes floatUp {
-      0% { transform: translateY(0) rotate(45deg); opacity: 1; }
-      100% { transform: translateY(-100vh) rotate(45deg); opacity: 0; }
-    }
   </style>
 </head>
 <body>
@@ -146,14 +141,21 @@
         door.remove();
       }, 1000);
 
-      e.preventDefault();
+      if (e.cancelable) {
+        e.preventDefault();
+      }
     }
 
-    // Add both click and touchstart events for mobile + desktop support
-    door.addEventListener('click', openDoor);
-    door.addEventListener('touchstart', openDoor);
+    // Add both click and touchstart events with passive: false
+    door.addEventListener('click', openDoor, { passive: false });
+    door.addEventListener('touchstart', openDoor, { passive: false });
 
-    // Floating hearts animation
+    // Optional: prevent scroll while interacting
+    document.body.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    // HEARTS ANIMATION
     const canvas = document.querySelector('.hearts');
     const ctx = canvas.getContext('2d');
     let hearts = [];
