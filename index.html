@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sorry Neena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #f6d365, #fda085);
+      font-family: 'Open Sans', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    .door {
+      width: 60vw;
+      max-width: 250px;
+      height: 70vh;
+      max-height: 400px;
+      background: linear-gradient(to bottom, #b97b56, #8e5a3c);
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      position: relative;
+      cursor: pointer;
+      z-index: 3;
+      transition: transform 1s ease-in-out;
+      transform-origin: left center;
+    }
+
+    .door::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .instruction {
+      position: absolute;
+      bottom: 40px;
+      font-size: 16px;
+      color: #fff;
+      background: rgba(0,0,0,0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      z-index: 2;
+      animation: fadeBlink 2s infinite;
+      text-align: center;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    @keyframes fadeBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      position: absolute;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 1s ease, transform 1s ease;
+      max-width: 90%;
+    }
+
+    .card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 7vw;
+      color: #e74c3c;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 4.5vw;
+      color: #333;
+    }
+
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(45deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="door" id="door"></div>
+  <div class="instruction" id="instruction">Please open the door, Neena...</div>
+
+  <div class="card" id="card">
+    <h1>I'm Sorry Neena</h1>
+    <p>I never meant to hurt you. Please forgive me from the bottom of my heart.</p>
+  </div>
+
+  <canvas class="hearts"></canvas>
+
+  <script>
+    const door = document.getElementById('door');
+    const card = document.getElementById('card');
+    const instruction = document.getElementById('instruction');
+
+    // Mobile-friendly tap interaction
+    window.addEventListener('click', () => {
+      door.style.transform = 'rotateY(100deg)';
+      instruction.style.display = 'none';
+      setTimeout(() => {
+        card.classList.add('show');
+        door.remove();
+      }, 1000);
+    });
+
+    // Floating hearts
+    const canvas = document.querySelector('.hearts');
+    const ctx = canvas.getContext('2d');
+    let hearts = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Heart {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 20 + 10;
+        this.speed = Math.random() * 1 + 0.5;
+        this.opacity = Math.random();
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(Math.PI / 4);
+        ctx.fillStyle = `rgba(255, 0, 0, ${this.opacity})`;
+        ctx.fillRect(0, 0, this.size, this.size);
+        ctx.beginPath();
+        ctx.arc(0, -this.size / 2, this.size / 2, 0, Math.PI * 2);
+        ctx.arc(-this.size / 2, 0, this.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      update() {
+        this.y -= this.speed;
+        if (this.y < -this.size) {
+          this.y = canvas.height + Math.random() * 100;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+    }
+
+    function createHearts(count = 50) {
+      hearts = [];
+      for (let i = 0; i < count; i++) {
+        hearts.push(new Heart());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let heart of hearts) {
+        heart.update();
+        heart.draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    createHearts();
+    animate();
+  </script>
+
+</body>
+</html>
