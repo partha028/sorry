@@ -132,18 +132,28 @@
     const door = document.getElementById('door');
     const card = document.getElementById('card');
     const instruction = document.getElementById('instruction');
+    let doorOpened = false;
 
-    // Mobile-friendly tap interaction
-    window.addEventListener('click', () => {
+    function openDoor(e) {
+      if (doorOpened) return;
+      doorOpened = true;
+
       door.style.transform = 'rotateY(100deg)';
       instruction.style.display = 'none';
+
       setTimeout(() => {
         card.classList.add('show');
         door.remove();
       }, 1000);
-    });
 
-    // Floating hearts
+      e.preventDefault();
+    }
+
+    // Add both click and touchstart events for mobile + desktop support
+    door.addEventListener('click', openDoor);
+    door.addEventListener('touchstart', openDoor);
+
+    // Floating hearts animation
     const canvas = document.querySelector('.hearts');
     const ctx = canvas.getContext('2d');
     let hearts = [];
